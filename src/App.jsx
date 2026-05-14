@@ -97,10 +97,9 @@ export default function App() {
     return allActiveRoutes.filter((r) => visibleCrewIds.has(r.crewId));
   }, [allActiveRoutes, visibleCrewIds]);
 
-  // In Setup mode, dots aren't drawn against any active route — so the
-  // crew-visibility toggle needs a canonical crew→customer mapping to filter
-  // by. The optimized assignment is the natural choice (it's the "real" map
-  // of who owns what).
+  // Setup mode has no active routes, but customers still need a canonical
+  // crew assignment (for the visibility toggle and the dot coloring).
+  // The optimized routes are the natural source.
   const setupOwnershipMap = useMemo(() => {
     const m = new Map();
     for (const route of optimizedRoutes) {
@@ -109,18 +108,41 @@ export default function App() {
     return m;
   }, [optimizedRoutes]);
 
-  // Customers to actually render. In Setup mode, filter by optimized owner.
-  // In routed modes, MapView already filters by route stops, but we narrow
-  // here too so the behavior is unified.
+  const crewColorById = useMemo(() => {
+    const m = new Map();
+    for (const c of crews) m.set(c.id, c.color);
+    return m;
+  }, [crews]);
+
+  // Single source of truth for customer dot colors across all modes. In Setup
+  // mode we color by the optimized-route owner so the dot palette has one
+  // consistent meaning (crew identity) the whole way through the demo.
+  const customerColors = useMemo(() => {
+    const m = new Map();
+    if (mode === 'setup') {
+      for (const [custId, crewId] of setupOwnershipMap) {
+        const color = crewColorById.get(crewId);
+        if (color) m.set(custId, color);
+      }
+    } else if (visibleRoutes) {
+      for (const r of visibleRoutes) {
+        for (const s of r.stops) m.set(s.id, r.color);
+      }
+    }
+    return m;
+  }, [mode, setupOwnershipMap, crewColorById, visibleRoutes]);
+
+  // Which customers actually render. In Setup, filter by visible crew via
+  // ownership map. In routed modes, the route-stops set IS the visible set.
   const displayedCustomers = useMemo(() => {
     if (mode === 'setup') {
       return customers.filter((c) => {
         const owner = setupOwnershipMap.get(c.id);
-        return owner ? visibleCrewIds.has(owner) : true;
+        return owner ? visibleCrewIds.has(owner) : false;
       });
     }
-    return customers;
-  }, [customers, mode, setupOwnershipMap, visibleCrewIds]);
+    return customers.filter((c) => customerColors.has(c.id));
+  }, [customers, mode, setupOwnershipMap, visibleCrewIds, customerColors]);
 
   // Truck positions + visited stops for visible crews only.
   const playback = useMemo(() => {
@@ -205,6 +227,7 @@ export default function App() {
       <MapView
         customers={displayedCustomers}
         routes={visibleRoutes}
+        customerColors={customerColors}
         trucks={playback?.trucks ?? null}
         visitedIds={playback?.visitedIds ?? null}
       />

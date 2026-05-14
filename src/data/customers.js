@@ -2,14 +2,14 @@
 // Deterministic via seeded PRNG so the demo always renders the same picture.
 
 const CITIES = [
-  { name: 'Bentonville',  lat: 36.3729, lng: -94.2088, weight: 0.20, color: '#2563eb' },
-  { name: 'Rogers',       lat: 36.3320, lng: -94.1185, weight: 0.18, color: '#16a34a' },
-  { name: 'Springdale',   lat: 36.1867, lng: -94.1288, weight: 0.16, color: '#dc2626' },
-  { name: 'Fayetteville', lat: 36.0626, lng: -94.1574, weight: 0.14, color: '#9333ea' },
-  { name: 'Bella Vista',  lat: 36.4814, lng: -94.2735, weight: 0.10, color: '#0891b2' },
-  { name: 'Centerton',    lat: 36.3589, lng: -94.2832, weight: 0.08, color: '#ea580c' },
-  { name: 'Lowell',       lat: 36.2562, lng: -94.1313, weight: 0.08, color: '#ca8a04' },
-  { name: 'Cave Springs', lat: 36.2670, lng: -94.2335, weight: 0.06, color: '#db2777' },
+  { name: 'Bentonville',  lat: 36.3729, lng: -94.2088, weight: 0.20 },
+  { name: 'Rogers',       lat: 36.3320, lng: -94.1185, weight: 0.18 },
+  { name: 'Springdale',   lat: 36.1867, lng: -94.1288, weight: 0.16 },
+  { name: 'Fayetteville', lat: 36.0626, lng: -94.1574, weight: 0.14 },
+  { name: 'Bella Vista',  lat: 36.4814, lng: -94.2735, weight: 0.10 },
+  { name: 'Centerton',    lat: 36.3589, lng: -94.2832, weight: 0.08 },
+  { name: 'Lowell',       lat: 36.2562, lng: -94.1313, weight: 0.08 },
+  { name: 'Cave Springs', lat: 36.2670, lng: -94.2335, weight: 0.06 },
 ];
 
 const STREET_NAMES = [
@@ -82,7 +82,6 @@ export function generateCustomers(count = 300, seed = 1337) {
       lat,
       lng,
       city: city.name,
-      zoneColor: city.color,
       propertySize: pickPropertySize(rand),
       frequency: pickFrequency(rand),
     });
@@ -90,5 +89,3 @@ export function generateCustomers(count = 300, seed = 1337) {
 
   return customers;
 }
-
-export const ZONE_LEGEND = CITIES.map(({ name, color }) => ({ name, color }));

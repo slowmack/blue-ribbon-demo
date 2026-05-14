@@ -177,40 +177,6 @@ html, body, #root {
   width: 100%;
 }
 
-.legend {
-  position: absolute;
-  bottom: 16px;
-  left: 16px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 10px 12px;
-  font-size: 12px;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.legend h3 {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #6b7280;
-  margin: 0 0 6px;
-}
-
-.legend .legend-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin: 2px 0;
-}
-
-.legend .legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
 .mode-toggle {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

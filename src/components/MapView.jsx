@@ -1,30 +1,12 @@
 import { MapContainer, TileLayer, CircleMarker, Polyline, Tooltip } from 'react-leaflet';
-import { ZONE_LEGEND } from '../data/customers.js';
 
 const NWA_CENTER = [36.25, -94.18];
 const DEFAULT_ZOOM = 10;
+const FALLBACK_COLOR = '#94a3b8';
 
-function buildCustomerColorMap(routes) {
-  if (!routes) return null;
-  const map = new Map();
-  for (const route of routes) {
-    for (const stop of route.stops) {
-      map.set(stop.id, route.color);
-    }
-  }
-  return map;
-}
-
-export default function MapView({ customers, routes, trucks, visitedIds }) {
-  const customerColors = buildCustomerColorMap(routes);
-  const showingRoutes = Boolean(routes);
+export default function MapView({ customers, routes, customerColors, trucks, visitedIds }) {
+  const showingRoutes = Boolean(routes && routes.length > 0);
   const showingTrucks = Boolean(trucks && trucks.length > 0);
-
-  // In routed modes (random/optimized), only render customers that belong to
-  // a visible crew. In setup mode, render all 300.
-  const visibleCustomers = showingRoutes
-    ? customers.filter((c) => customerColors.has(c.id))
-    : customers;
 
   return (
     <div className="map-wrap">
@@ -52,8 +34,8 @@ export default function MapView({ customers, routes, trucks, visitedIds }) {
             />
           ))}
 
-        {visibleCustomers.map((c) => {
-          const color = customerColors?.get(c.id) ?? c.zoneColor;
+        {customers.map((c) => {
+          const color = customerColors?.get(c.id) ?? FALLBACK_COLOR;
           const isVisited = visitedIds?.has(c.id);
           return (
             <CircleMarker
@@ -92,18 +74,6 @@ export default function MapView({ customers, routes, trucks, visitedIds }) {
             />
           ))}
       </MapContainer>
-
-      {!showingRoutes && (
-        <div className="legend">
-          <h3>Zones</h3>
-          {ZONE_LEGEND.map((z) => (
-            <div key={z.name} className="legend-row">
-              <span className="legend-dot" style={{ background: z.color }} />
-              <span>{z.name}</span>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
