@@ -6,6 +6,9 @@ import { generateCrews } from './data/crews.js';
 import { buildRandomRoutes, buildOptimizedRoutes, fleetStats } from './lib/routing.js';
 import { buildWeekSchedule, routesForDay, dayFleetStats, DAY_LABELS } from './lib/schedule.js';
 import { positionAlongRoute } from './lib/animation.js';
+import { generatePeople } from './data/people.js';
+import { attachStats, computeTeamStats } from './lib/performance.js';
+import CrewProfile from './components/CrewProfile.jsx';
 
 const ANIM_DURATION_MS = 30000;
 
@@ -36,6 +39,27 @@ export default function App() {
     () => new Set(crews.map((c) => c.id))
   );
   const [rainedOutTuesday, setRainedOutTuesday] = useState(false);
+  const [profileCrewId, setProfileCrewId] = useState(null);
+
+  const peopleByCrew = useMemo(() => generatePeople(crews), [crews]);
+
+  const peopleWithStatsByCrew = useMemo(() => {
+    const m = new Map();
+    for (const crew of crews) {
+      const people = peopleByCrew.get(crew.id) ?? [];
+      m.set(crew.id, attachStats(crew, people));
+    }
+    return m;
+  }, [crews, peopleByCrew]);
+
+  const teamStatsByCrew = useMemo(() => {
+    const m = new Map();
+    for (const crew of crews) {
+      const peopleWithStats = peopleWithStatsByCrew.get(crew.id) ?? [];
+      m.set(crew.id, computeTeamStats(crew, peopleWithStats));
+    }
+    return m;
+  }, [crews, peopleWithStatsByCrew]);
 
   const scheduleOptions = useMemo(
     () => (rainedOutTuesday ? { rainedDays: new Set([1]) } : {}),
@@ -56,6 +80,11 @@ export default function App() {
     setIsPlaying(false);
     setProgress(0);
   }, [selectedDay, mode, rainedOutTuesday]);
+
+  // Profile drawer is Setup-only; close it on any mode change away from setup.
+  useEffect(() => {
+    if (mode !== 'setup') setProfileCrewId(null);
+  }, [mode]);
 
   // rAF animation loop.
   const rafRef = useRef();
@@ -200,6 +229,10 @@ export default function App() {
     setVisibleCrewIds(new Set([crewId]));
   }
 
+  const profileCrew = profileCrewId ? crews.find((c) => c.id === profileCrewId) : null;
+  const profilePeople = profileCrewId ? peopleWithStatsByCrew.get(profileCrewId) : null;
+  const profileTeamStats = profileCrewId ? teamStatsByCrew.get(profileCrewId) : null;
+
   return (
     <div className="app">
       <CrewSidebar
@@ -208,6 +241,7 @@ export default function App() {
         onToggleCrew={toggleCrewVisibility}
         onShowAll={showAllCrews}
         onShowOnly={showOnlyCrew}
+        onOpenProfile={setProfileCrewId}
         mode={mode}
         onModeChange={setMode}
         routes={crewRouteLookup}
@@ -239,6 +273,14 @@ export default function App() {
         trucks={playback?.trucks ?? null}
         visitedIds={playback?.visitedIds ?? null}
       />
+      {profileCrew && (
+        <CrewProfile
+          crew={profileCrew}
+          people={profilePeople}
+          teamStats={profileTeamStats}
+          onClose={() => setProfileCrewId(null)}
+        />
+      )}
     </div>
   );
 }

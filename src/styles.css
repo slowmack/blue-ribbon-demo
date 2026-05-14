@@ -254,6 +254,235 @@ html, body, #root {
   font-style: italic;
 }
 
+/* ===== Crew profile drawer ===== */
+
+.crew-profile-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  background: transparent;
+}
+
+.crew-profile {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 380px;
+  max-width: 90vw;
+  z-index: 1501;
+  background: #ffffff;
+  border-left: 1px solid #e5e7eb;
+  box-shadow: -8px 0 24px rgba(15, 23, 42, 0.12);
+  overflow-y: auto;
+  animation: slide-in 200ms ease-out;
+}
+
+@keyframes slide-in {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+.profile-header {
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  z-index: 1;
+}
+
+.profile-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.profile-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-name {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #0f172a;
+}
+
+.profile-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.profile-rating-num {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.stars {
+  color: #f59e0b;
+  letter-spacing: 1px;
+  font-size: 14px;
+}
+
+.profile-close {
+  appearance: none;
+  background: none;
+  border: 0;
+  font-size: 22px;
+  line-height: 1;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.profile-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.profile-section {
+  padding: 16px 18px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.profile-section:last-child {
+  border-bottom: 0;
+}
+
+.profile-section-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.profile-team-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.profile-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-metric-label {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.profile-metric-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.profile-metric-value .unit {
+  font-size: 11px;
+  font-weight: 400;
+  color: #6b7280;
+}
+
+.metric-bar {
+  height: 4px;
+  background: #f1f5f9;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.metric-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+.profile-crew-meta {
+  font-size: 12px;
+  color: #4b5563;
+  margin-top: 4px;
+}
+
+.profile-crew-notes {
+  font-size: 12px;
+  color: #6b7280;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.profile-person {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.profile-person-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.profile-person-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.profile-person-tenure {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.profile-person-role {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+  margin-top: 1px;
+  margin-bottom: 8px;
+}
+
+.profile-person-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-person-stat {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.profile-person-stat .ps-label {
+  color: #6b7280;
+}
+
+.profile-person-stat .ps-value {
+  color: #0f172a;
+  font-weight: 500;
+}
+
+.profile-person-stat .metric-bar {
+  grid-column: 1 / -1;
+  margin-top: 2px;
+}
+
 .leaflet-container {
   height: 100%;
   width: 100%;

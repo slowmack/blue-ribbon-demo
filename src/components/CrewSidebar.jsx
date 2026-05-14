@@ -14,6 +14,7 @@ export default function CrewSidebar({
   onToggleCrew,
   onShowAll,
   onShowOnly,
+  onOpenProfile,
   mode,
   onModeChange,
   routes,
@@ -99,6 +100,13 @@ export default function CrewSidebar({
       {crews.map((crew) => {
         const visible = visibleCrewIds.has(crew.id);
         const route = routeByCrew.get(crew.id);
+        const isSetup = mode === 'setup';
+        const cardAction = isSetup
+          ? () => onOpenProfile(crew.id)
+          : () => onToggleCrew(crew.id);
+        const cardTitle = isSetup
+          ? `Click to view ${crew.name} profile`
+          : visible ? 'Hide this crew on the map' : 'Show this crew on the map';
         return (
           <div
             key={crew.id}
@@ -107,9 +115,9 @@ export default function CrewSidebar({
             <button
               type="button"
               className="crew-card-toggle"
-              onClick={() => onToggleCrew(crew.id)}
-              aria-pressed={visible}
-              title={visible ? 'Hide this crew on the map' : 'Show this crew on the map'}
+              onClick={cardAction}
+              aria-pressed={isSetup ? undefined : visible}
+              title={cardTitle}
             >
               <div className="crew-header">
                 <span className="crew-name">{crew.name}</span>

@@ -23,6 +23,12 @@
 - [x] Shifted demo banner's left edge from 12px to 80px to clear Leaflet zoom controls.
 - [x] Pushed to GitHub at `slowmack/blue-ribbon-demo` — required rewriting 11 commits via filter-branch to swap `slw@smack.co` for `slowmack@users.noreply.github.com` after GitHub's email-privacy check rejected the first push.
 - [x] Deployed to Vercel. Live at **https://blue-ribbon-demo.vercel.app/** — auto-deploys on push to `main`.
+- [x] Crew profile drawer (Setup mode). In Setup, clicking a crew card opens a right-side drawer with synthetic people data and performance scores.
+- [x] New `src/data/people.js` — deterministic generator: 3 or 4 people per crew, named from small pools, roles by size (Lead/Mower/Trimmer/Helper), tenure ranges per role.
+- [x] New `src/lib/performance.js` — per-person stats (productivity tied to crew.speed with ±15% variance, quality 3.5–5.0 with tenure bias, attendance 88–99%) and team aggregates plus a 5-star composite rating.
+- [x] New `src/components/CrewProfile.jsx` — drawer with crew header (color swatch + composite stars), team metrics block, and per-person cards with bars/stars.
+- [x] CrewSidebar branches on mode: Setup card click → opens profile; routed-mode card click → toggles visibility (unchanged). "Only" and "Show all" affordances work in both modes.
+- [x] Drawer dismissible via X button, Escape key, or backdrop click. Auto-closes when leaving Setup mode.
 
 ## Deferred
 

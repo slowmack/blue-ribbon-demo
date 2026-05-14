@@ -54,6 +54,7 @@ Goal: a polished, interactive demo Sean shows to the Blue Ribbon owner to earn b
 - 2026-05-14: Rained-out Tuesday scenario — toggle in sidebar; Tuesday's customers redistribute across Mon/Wed/Thu/Fri via the same balanced k-means.
 - 2026-05-14: Synthetic-data banner at top of map — DEMO tag + "Real customers would replace these 300 dots" caveat.
 - 2026-05-14: **Shipped to production.** Pushed to `slowmack/blue-ribbon-demo` on GitHub, deployed to Vercel. Live at https://blue-ribbon-demo.vercel.app/. Email-privacy rewrite required during push (filter-branch to swap `slw@smack.co` → `slowmack@users.noreply.github.com`).
+- 2026-05-14: Crew profile drawer — clicking a crew card in Setup mode opens a right-side drawer with synthetic people, individual scores (productivity / quality / attendance / tenure), and team-level composite rating.
 
 ## Key Files
 
@@ -72,3 +73,6 @@ Goal: a polished, interactive demo Sean shows to the Blue Ribbon owner to earn b
 - `src/components/StatsPanel.jsx` — fleet stats with before/after delta + period label
 - `src/components/DayPicker.jsx` — Week / Mon / Tue / Wed / Thu / Fri buttons
 - `src/components/PlaybackControls.jsx` — play/pause, reset, speed selector, progress bar
+- `src/data/people.js` — synthetic crew member generator (names, roles, tenure) keyed by crew
+- `src/lib/performance.js` — computePersonStats, computeTeamStats, attachStats; composite 1–5 star rating
+- `src/components/CrewProfile.jsx` — right-side drawer shown in Setup mode when a crew card is clicked
