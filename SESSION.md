@@ -4,8 +4,10 @@ Blue Ribbon Demo Simulator — Phase 0 wedge before the production build for the
 
 Goal: a polished, interactive demo Sean shows to the Blue Ribbon owner to earn buy-in for real customer data extraction. Demo code becomes the front-end of the production system later — none of it is throwaway.
 
-### Related docs
+### Related docs and links
 
+- **Live demo**: https://blue-ribbon-demo.vercel.app/ (Vercel, auto-deploys on push to main)
+- **GitHub**: https://github.com/slowmack/blue-ribbon-demo
 - `BUILD_PLAN.md` (this repo) — full Phase 0 build plan: scope, what the demo shows, synthetic data spec, day-by-day estimate.
 - `~/projects/blue-ribbon/` — Sean's source folder for plan docs: holds the production build plan (Phases 1–5) **and** a copy of the Phase 0 demo plan. Phase 0 here feeds into Phase 1 there once the owner grants data access. Demo components carry forward as the production front-end.
 
@@ -33,11 +35,10 @@ Goal: a polished, interactive demo Sean shows to the Blue Ribbon owner to earn b
 
 ## Next Actions
 
-- Sean creating the empty `slowmack/blue-ribbon-demo` repo on GitHub now; once done, add the remote and push 7 commits
-- Deploy via Vercel (import from GitHub → auto-detect Vite)
-- Owner-walkthrough rehearsal: open the demo, click through Setup → Unoptimized → Optimized → Week → Day → Play → 🌧 Rain out Tuesday
+- Owner-walkthrough rehearsal: open https://blue-ribbon-demo.vercel.app/ and click through Setup → Unoptimized → Optimized → Week → Day → Play → 🌧 Rain out Tuesday. Time how the story lands.
+- Send the link to the Blue Ribbon owner when Sean's ready
 - Optional polish: animate the truck with a heading-aware icon instead of a plain circle; scrubbable progress bar
-- Maps key decision before live demo: stay on OSM tiles or swap to Google Maps / Mapbox for polish
+- Maps key decision before owner meeting: stay on OSM tiles or swap to Google Maps / Mapbox for visual polish
 
 ## Known Bugs
 
@@ -52,6 +53,7 @@ Goal: a polished, interactive demo Sean shows to the Blue Ribbon owner to earn b
 - 2026-05-14: Setup screen polish — dropped zone (city) coloring entirely. Dots are now crew-colored across all modes (Setup uses optimized assignment as canonical owner map). Removed zone legend.
 - 2026-05-14: Rained-out Tuesday scenario — toggle in sidebar; Tuesday's customers redistribute across Mon/Wed/Thu/Fri via the same balanced k-means.
 - 2026-05-14: Synthetic-data banner at top of map — DEMO tag + "Real customers would replace these 300 dots" caveat.
+- 2026-05-14: **Shipped to production.** Pushed to `slowmack/blue-ribbon-demo` on GitHub, deployed to Vercel. Live at https://blue-ribbon-demo.vercel.app/. Email-privacy rewrite required during push (filter-branch to swap `slw@smack.co` → `slowmack@users.noreply.github.com`).
 
 ## Key Files
 

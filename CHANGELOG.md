@@ -1,9 +1,9 @@
 ## In Progress
 
-- [ ] GitHub repo + Vercel deploy (Sean setting up the repo now)
-- [ ] Owner-walkthrough rehearsal in browser
+- [ ] Owner-walkthrough rehearsal at https://blue-ribbon-demo.vercel.app/
+- [ ] Send the live link to the Blue Ribbon owner
 - [ ] Optional polish: heading-aware truck icon, scrubbable progress bar
-- [ ] Decision before live demo: keep OSM tiles or swap to Google Maps / Mapbox
+- [ ] Decision before owner meeting: keep OSM tiles or swap to Google Maps / Mapbox
 
 ## 2026-05-14
 
@@ -20,6 +20,9 @@
 - [x] Removed the zone legend overlay and its CSS.
 - [x] Built `ScenarioPanel.jsx` with "Rain out Tuesday" toggle. Schedule lib accepts a `rainedDays` Set; rained days return empty stops and the week re-clusters into the active days. Mon/Wed/Thu/Fri absorb the work.
 - [x] Synthetic-data banner at top of map: `DEMO` tag + "Real customers would replace these 300 dots" caveat for cold-landing owner protection.
+- [x] Shifted demo banner's left edge from 12px to 80px to clear Leaflet zoom controls.
+- [x] Pushed to GitHub at `slowmack/blue-ribbon-demo` — required rewriting 11 commits via filter-branch to swap `slw@smack.co` for `slowmack@users.noreply.github.com` after GitHub's email-privacy check rejected the first push.
+- [x] Deployed to Vercel. Live at **https://blue-ribbon-demo.vercel.app/** — auto-deploys on push to `main`.
 
 ## Deferred
 
