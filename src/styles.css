@@ -111,17 +111,6 @@ html, body, #root {
   flex: 1;
 }
 
-.crew-card .crew-eye {
-  font-size: 12px;
-  color: #6b7280;
-  width: 12px;
-  text-align: center;
-}
-
-.crew-card.hidden .crew-eye {
-  color: #9ca3af;
-}
-
 .crew-card .crew-swatch {
   width: 14px;
   height: 14px;

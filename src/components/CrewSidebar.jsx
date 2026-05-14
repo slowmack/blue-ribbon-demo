@@ -103,9 +103,6 @@ export default function CrewSidebar({
             >
               <div className="crew-header">
                 <span className="crew-name">{crew.name}</span>
-                <span className="crew-eye" aria-hidden="true">
-                  {visible ? '●' : '○'}
-                </span>
                 <span
                   className={`crew-swatch ${visible ? '' : 'off'}`}
                   style={visible ? { background: crew.color } : { borderColor: crew.color }}
