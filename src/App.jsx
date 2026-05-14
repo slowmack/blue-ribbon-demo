@@ -27,15 +27,6 @@ export default function App() {
   const randomStats = useMemo(() => fleetStats(randomRoutes), [randomRoutes]);
   const optimizedStats = useMemo(() => fleetStats(optimizedRoutes), [optimizedRoutes]);
 
-  const randomWeek = useMemo(
-    () => buildWeekSchedule(randomRoutes, crews),
-    [randomRoutes, crews]
-  );
-  const optimizedWeek = useMemo(
-    () => buildWeekSchedule(optimizedRoutes, crews),
-    [optimizedRoutes, crews]
-  );
-
   const [mode, setMode] = useState('setup');
   const [selectedDay, setSelectedDay] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -44,12 +35,27 @@ export default function App() {
   const [visibleCrewIds, setVisibleCrewIds] = useState(
     () => new Set(crews.map((c) => c.id))
   );
+  const [rainedOutTuesday, setRainedOutTuesday] = useState(false);
 
-  // Reset playback when day or mode changes.
+  const scheduleOptions = useMemo(
+    () => (rainedOutTuesday ? { rainedDays: new Set([1]) } : {}),
+    [rainedOutTuesday]
+  );
+
+  const randomWeek = useMemo(
+    () => buildWeekSchedule(randomRoutes, crews, scheduleOptions),
+    [randomRoutes, crews, scheduleOptions]
+  );
+  const optimizedWeek = useMemo(
+    () => buildWeekSchedule(optimizedRoutes, crews, scheduleOptions),
+    [optimizedRoutes, crews, scheduleOptions]
+  );
+
+  // Reset playback when day, mode, or rainout state changes.
   useEffect(() => {
     setIsPlaying(false);
     setProgress(0);
-  }, [selectedDay, mode]);
+  }, [selectedDay, mode, rainedOutTuesday]);
 
   // rAF animation loop.
   const rafRef = useRef();
@@ -223,6 +229,8 @@ export default function App() {
         randomStats={selectedDay !== null ? randomDayStats : randomStats}
         optimizedStats={selectedDay !== null ? optimizedDayStats : optimizedStats}
         periodLabel={periodLabel}
+        rainedOutTuesday={rainedOutTuesday}
+        onToggleRainout={() => setRainedOutTuesday((v) => !v)}
       />
       <MapView
         customers={displayedCustomers}

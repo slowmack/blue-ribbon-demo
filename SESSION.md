@@ -33,11 +33,11 @@ Goal: a polished, interactive demo Sean shows to the Blue Ribbon owner to earn b
 
 ## Next Actions
 
-- Owner-walkthrough rehearsal: open the demo, click through Setup → Unoptimized → Optimized → Week → Day → Play. Time how the story lands.
-- Optional half day: rained-out Tuesday weather scenario (reshuffle the week and update stats)
+- Sean creating the empty `slowmack/blue-ribbon-demo` repo on GitHub now; once done, add the remote and push 7 commits
+- Deploy via Vercel (import from GitHub → auto-detect Vite)
+- Owner-walkthrough rehearsal: open the demo, click through Setup → Unoptimized → Optimized → Week → Day → Play → 🌧 Rain out Tuesday
 - Optional polish: animate the truck with a heading-aware icon instead of a plain circle; scrubbable progress bar
 - Maps key decision before live demo: stay on OSM tiles or swap to Google Maps / Mapbox for polish
-- Deferred until Phase 0 nears final: create `slowmack/blue-ribbon-demo` on GitHub and push, plus deploy to Vercel for a shareable URL
 
 ## Known Bugs
 
@@ -49,6 +49,9 @@ Goal: a polished, interactive demo Sean shows to the Blue Ribbon owner to earn b
 - 2026-05-13: Day 2 — routing engine (random + balanced k-means/nearest-neighbor), mode toggle, stats panel, route polylines on map
 - 2026-05-13: Day 3 — weekly schedule split (per-crew sub-clustering), DayPicker, animated playback, truck markers, visited-stop fade
 - 2026-05-14: Per-crew enable/disable (later corrected) — first pass redistributed workload across remaining crews; reverted to a pure map-visibility toggle per user feedback. Routes stay computed against all 10 crews; toggle just hides dots/route/truck on the map. Added "Only" button per crew and "Show all" link.
+- 2026-05-14: Setup screen polish — dropped zone (city) coloring entirely. Dots are now crew-colored across all modes (Setup uses optimized assignment as canonical owner map). Removed zone legend.
+- 2026-05-14: Rained-out Tuesday scenario — toggle in sidebar; Tuesday's customers redistribute across Mon/Wed/Thu/Fri via the same balanced k-means.
+- 2026-05-14: Synthetic-data banner at top of map — DEMO tag + "Real customers would replace these 300 dots" caveat.
 
 ## Key Files
 

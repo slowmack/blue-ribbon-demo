@@ -172,6 +172,88 @@ html, body, #root {
   position: relative;
 }
 
+.map-banner {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.92);
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.map-banner-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  background: #ef4444;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.scenario {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  background: #ffffff;
+}
+
+.scenario.active {
+  background: #fef3c7;
+  border-color: #fcd34d;
+}
+
+.scenario-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.scenario-btn {
+  appearance: none;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #1f2937;
+  cursor: pointer;
+  text-align: left;
+}
+
+.scenario-btn:hover {
+  background: #f1f5f9;
+}
+
+.scenario-btn.active {
+  background: #f59e0b;
+  color: #ffffff;
+  border-color: #d97706;
+}
+
+.scenario-btn.active:hover {
+  background: #d97706;
+}
+
+.scenario-detail {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #92400e;
+  font-style: italic;
+}
+
 .leaflet-container {
   height: 100%;
   width: 100%;

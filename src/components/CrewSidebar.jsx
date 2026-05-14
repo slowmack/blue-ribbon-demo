@@ -2,6 +2,7 @@ import ModeToggle from './ModeToggle.jsx';
 import StatsPanel from './StatsPanel.jsx';
 import DayPicker from './DayPicker.jsx';
 import PlaybackControls from './PlaybackControls.jsx';
+import ScenarioPanel from './ScenarioPanel.jsx';
 
 function formatMiles(n) {
   return `${Math.round(n)} mi`;
@@ -28,6 +29,8 @@ export default function CrewSidebar({
   randomStats,
   optimizedStats,
   periodLabel,
+  rainedOutTuesday,
+  onToggleRainout,
 }) {
   const routeByCrew = new Map();
   if (routes) {
@@ -52,6 +55,13 @@ export default function CrewSidebar({
           randomStats={randomStats}
           optimizedStats={optimizedStats}
           periodLabel={periodLabel}
+        />
+      )}
+
+      {dayPickerVisible && (
+        <ScenarioPanel
+          rainedOutTuesday={rainedOutTuesday}
+          onToggleRainout={onToggleRainout}
         />
       )}
 

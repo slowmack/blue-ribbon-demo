@@ -1,7 +1,7 @@
 ## In Progress
 
+- [ ] GitHub repo + Vercel deploy (Sean setting up the repo now)
 - [ ] Owner-walkthrough rehearsal in browser
-- [ ] Optional: rained-out Tuesday scenario (reshuffle week + update stats)
 - [ ] Optional polish: heading-aware truck icon, scrubbable progress bar
 - [ ] Decision before live demo: keep OSM tiles or swap to Google Maps / Mapbox
 
@@ -13,11 +13,15 @@
 - [x] Per-crew "Only" button (visible on hover) — one-click isolate.
 - [x] "Show all" link in the Crews header when at least one crew is hidden.
 - [x] Visual states: hidden crew card faded, swatch becomes outline-only, eye-dot indicator (● visible / ○ hidden) next to crew name.
+- [x] Removed eye-dot indicator — swatch alone signals visibility state (per user feedback: didn't need both).
+- [x] Crew toggle works in Setup mode — uses optimized-route assignment as canonical crew→customer ownership map.
+- [x] "Only" button now also appears in Setup mode.
+- [x] Removed city/zone coloring entirely — dropped `zoneColor` field and `ZONE_LEGEND`. Dots are crew-colored across all modes (Setup uses optimized assignment for color). One palette, one meaning.
+- [x] Removed the zone legend overlay and its CSS.
+- [x] Built `ScenarioPanel.jsx` with "Rain out Tuesday" toggle. Schedule lib accepts a `rainedDays` Set; rained days return empty stops and the week re-clusters into the active days. Mon/Wed/Thu/Fri absorb the work.
+- [x] Synthetic-data banner at top of map: `DEMO` tag + "Real customers would replace these 300 dots" caveat for cold-landing owner protection.
 
 ## Deferred
-
-- [ ] Create GitHub repo `slowmack/blue-ribbon-demo` and push — Sean will set this up once Phase 0 nears the final demo
-- [ ] Deploy to Vercel for a shareable URL to share with the Blue Ribbon owner
 
 ## 2026-05-13 (Day 3)
 

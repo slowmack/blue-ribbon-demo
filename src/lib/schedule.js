@@ -63,25 +63,49 @@ function clusterStopsIntoDays(stops, days) {
   return clusters;
 }
 
-export function splitWeeklyRoute(route, crewSpeed, days = 5) {
-  const dayClusters = clusterStopsIntoDays(route.stops, days);
-  return dayClusters.map((cluster, d) => {
+export function splitWeeklyRoute(route, crewSpeed, options = {}) {
+  const { days = 5, rainedDays = null } = options;
+  const rainedSet =
+    rainedDays && rainedDays.size != null ? rainedDays : new Set(rainedDays || []);
+
+  const activeDays = [];
+  for (let i = 0; i < days; i++) if (!rainedSet.has(i)) activeDays.push(i);
+
+  // Cluster only into active-day slots; rained days get empty.
+  const dayClusters = activeDays.length > 0
+    ? clusterStopsIntoDays(route.stops, activeDays.length)
+    : [];
+
+  const result = Array.from({ length: days }, (_, d) => ({
+    dayIndex: d,
+    dayLabel: DAY_LABELS[d],
+    stops: [],
+    miles: 0,
+    hours: 0,
+    rainedOut: rainedSet.has(d),
+  }));
+
+  activeDays.forEach((d, k) => {
+    const cluster = dayClusters[k] || [];
     const stops = cluster.length > 1
       ? nearestNeighborOrder(cluster, centroid(cluster))
       : cluster;
     const { miles, hours } = summarizeDay(stops, crewSpeed);
-    return {
+    result[d] = {
       dayIndex: d,
       dayLabel: DAY_LABELS[d],
       stops,
       miles,
       hours,
+      rainedOut: false,
     };
   });
+
+  return result;
 }
 
 // Returns an array (one per crew) of { crewId, crewName, color, days: [{...}, ...] }
-export function buildWeekSchedule(routes, crews) {
+export function buildWeekSchedule(routes, crews, options = {}) {
   const crewById = new Map(crews.map((c) => [c.id, c]));
   return routes.map((route) => {
     const crew = crewById.get(route.crewId);
@@ -89,7 +113,7 @@ export function buildWeekSchedule(routes, crews) {
       crewId: route.crewId,
       crewName: route.crewName,
       color: route.color,
-      days: splitWeeklyRoute(route, crew?.speed ?? 1),
+      days: splitWeeklyRoute(route, crew?.speed ?? 1, options),
     };
   });
 }

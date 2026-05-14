@@ -10,6 +10,10 @@ export default function MapView({ customers, routes, customerColors, trucks, vis
 
   return (
     <div className="map-wrap">
+      <div className="map-banner">
+        <span className="map-banner-tag">DEMO</span>
+        <span>Synthetic customer data across Northwest Arkansas · Real customers would replace these 300 dots</span>
+      </div>
       <MapContainer
         center={NWA_CENTER}
         zoom={DEFAULT_ZOOM}
