@@ -97,6 +97,31 @@ export default function App() {
     return allActiveRoutes.filter((r) => visibleCrewIds.has(r.crewId));
   }, [allActiveRoutes, visibleCrewIds]);
 
+  // In Setup mode, dots aren't drawn against any active route — so the
+  // crew-visibility toggle needs a canonical crew→customer mapping to filter
+  // by. The optimized assignment is the natural choice (it's the "real" map
+  // of who owns what).
+  const setupOwnershipMap = useMemo(() => {
+    const m = new Map();
+    for (const route of optimizedRoutes) {
+      for (const stop of route.stops) m.set(stop.id, route.crewId);
+    }
+    return m;
+  }, [optimizedRoutes]);
+
+  // Customers to actually render. In Setup mode, filter by optimized owner.
+  // In routed modes, MapView already filters by route stops, but we narrow
+  // here too so the behavior is unified.
+  const displayedCustomers = useMemo(() => {
+    if (mode === 'setup') {
+      return customers.filter((c) => {
+        const owner = setupOwnershipMap.get(c.id);
+        return owner ? visibleCrewIds.has(owner) : true;
+      });
+    }
+    return customers;
+  }, [customers, mode, setupOwnershipMap, visibleCrewIds]);
+
   // Truck positions + visited stops for visible crews only.
   const playback = useMemo(() => {
     if (!visibleRoutes || selectedDay === null) return null;
@@ -178,7 +203,7 @@ export default function App() {
         periodLabel={periodLabel}
       />
       <MapView
-        customers={customers}
+        customers={displayedCustomers}
         routes={visibleRoutes}
         trucks={playback?.trucks ?? null}
         visitedIds={playback?.visitedIds ?? null}
