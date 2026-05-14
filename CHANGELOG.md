@@ -30,8 +30,6 @@
 - [x] CrewSidebar branches on mode: Setup card click → opens profile; routed-mode card click → toggles visibility (unchanged). "Only" and "Show all" affordances work in both modes.
 - [x] Drawer dismissible via X button, Escape key, or backdrop click. Auto-closes when leaving Setup mode.
 
-## Deferred
-
 ## 2026-05-13 (Day 3)
 
 - [x] Built `src/lib/schedule.js` — weekly→daily splitter using per-crew balanced k-means sub-clustering with farthest-first seeding + Lloyd iterations

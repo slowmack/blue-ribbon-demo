@@ -13,25 +13,23 @@ Goal: a polished, interactive demo Sean shows to the Blue Ribbon owner to earn b
 
 ## Current State
 
-- Project directory scaffolded at `~/projects/blue-ribbon-demo/`
-- Standard docs in place (this file, CHANGELOG.md, ARCHITECTURE.mermaid, BUILD_PLAN.md)
-- Vite + React app initialized, deps installed (leaflet, react-leaflet)
-- Synthetic customer + crew data generators built
-- Map shell rendering 300 customer dots over Northwest Arkansas, color-coded by zone
-- Sidebar listing 10 crews with names, size, speed, capacity
-- Google Maps key deferred — using Leaflet + OpenStreetMap tiles for now
-- Git initialized locally; GitHub remote deferred until Phase 0 nears the final demo
-- **Day 2:** Three-mode toggle (Setup / Unoptimized / Optimized) with live before/after comparison
-- **Day 2:** Routing engine — random partition for unoptimized, capacity-proportional balanced k-means + nearest-neighbor for optimized
-- **Day 2:** StatsPanel showing total miles, hours, avg route, longest route, with % delta
-- **Day 2:** Map renders crew-colored route polylines + dots when in routed mode
-- **Day 3:** Week schedule split — each crew's stops sub-clustered into 5 balanced k-means clusters (one per weekday), then NN-ordered locally
-- **Day 3:** DayPicker (Week + M/T/W/Th/F) — selecting a day filters the map to that day's routes and switches StatsPanel to per-day numbers
-- **Day 3:** PlaybackControls — play/pause/reset, 0.5×/1×/2×/4× speeds, 30-sec base wall-clock duration
-- **Day 3:** Animated truck markers (white-outlined crew-colored circles) interpolated along each day's route via requestAnimationFrame
-- **Day 3:** Visited stops fade as the truck passes them
-- **Day 3+:** Per-crew **visibility toggle** — click any crew card to hide/show its dots, route line, and truck on the map. Routes themselves are always computed against all 10 crews; the toggle is a pure display filter. Hover any crew card to reveal an "Only" button that isolates that crew. "Show all" link in the Crews header brings everyone back.
-- Headline numbers from current synthetic data: **3,429 → 459 mi/wk (87% reduction)**, hours 323 → 221 (31% reduction). Stats panel always reflects the fleet — toggling visibility doesn't shift the headline.
+**Phase 0 shipped.** Live at https://blue-ribbon-demo.vercel.app/, repo at github.com/slowmack/blue-ribbon-demo, auto-deploys on push to main.
+
+**Feature inventory:**
+- Vite + React SPA, Leaflet + OpenStreetMap tiles (no Maps API key)
+- 300 synthetic customers across 8 NWA cities, 10 crews (6× size-3 + 4× size-4, speeds 0.85–1.15×)
+- Three-mode toggle: **Setup / Unoptimized / Optimized**
+- Routing: random partition (unoptimized) vs capacity-proportional balanced k-means + nearest-neighbor (optimized)
+- StatsPanel: total miles / hours / avg / longest, with before-after delta
+- Weekly schedule split: each crew's stops sub-clustered into 5 balanced days, NN-ordered locally
+- DayPicker (Week + M/T/W/Th/F) and animated playback (truck markers + visited-stop fade), 30-sec wall-clock at 1×, speeds 0.5×/1×/2×/4×
+- Per-crew visibility toggle (display filter; routes still computed against all 10 crews), "Only" button per crew, "Show all" link
+- Rained-out Tuesday scenario: redistributes Tuesday's work across Mon/Wed/Thu/Fri via the same k-means
+- Crew profile drawer (Setup mode only): clicking a crew card opens a right-side drawer with synthetic people (3–4 per crew, roles Lead/Mower/Trimmer/Helper, tenure) and performance scoring (productivity tied to crew speed, quality stars, attendance %, 5-star team composite)
+- Synthetic-data banner at top of map (DEMO tag + caveat)
+- Dots are crew-colored across all modes (Setup uses optimized assignment); no zone/city coloring
+
+**Headline numbers:** 3,429 → 459 mi/wk (87% reduction), hours 323 → 221 (31% reduction). Stats stay fleet-wide when isolating crews — the headline doesn't shift.
 
 ## Next Actions
 
@@ -42,7 +40,7 @@ Goal: a polished, interactive demo Sean shows to the Blue Ribbon owner to earn b
 
 ## Known Bugs
 
-- None yet — Day 1 only covers scaffold + static visualization
+- None known. Not yet stress-tested in mobile/tablet viewports (out of scope per build plan).
 
 ## Session Log
 
