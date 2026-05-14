@@ -1,0 +1,45 @@
+graph TB
+    subgraph "Data Layer (synthetic, Phase 0)"
+        CUST[customers.js<br/>300 NWA records]
+        CREW[crews.js<br/>10 crews]
+        ROUTES[routes.js<br/>nearest-neighbor<br/>Day 2]
+    end
+
+    subgraph "State"
+        STORE[App state<br/>view mode, selected day,<br/>optimized vs unoptimized]
+    end
+
+    subgraph "UI Layer (React)"
+        APP[App.jsx<br/>layout shell]
+        MAP[MapView.jsx<br/>Leaflet + OSM]
+        SIDE[CrewSidebar.jsx]
+        STATS[StatsPanel.jsx<br/>Day 2]
+        SCHED[ScheduleView.jsx<br/>Day 3]
+        PLAY[RoutePlayback.jsx<br/>Day 3]
+    end
+
+    CUST --> STORE
+    CREW --> STORE
+    ROUTES --> STORE
+    STORE --> APP
+    APP --> MAP
+    APP --> SIDE
+    APP --> STATS
+    APP --> SCHED
+    APP --> PLAY
+    MAP -.renders.-> CUST
+    MAP -.overlays.-> ROUTES
+
+    subgraph "Phase 1+ (production, not yet built)"
+        CSV[CSV import +<br/>geocoding]
+        ORTOOLS[OR-Tools<br/>real optimizer]
+    end
+
+    CSV -.replaces.-> CUST
+    ORTOOLS -.replaces.-> ROUTES
+
+    style CUST fill:#e1f5ff
+    style CREW fill:#e1f5ff
+    style ROUTES fill:#fff4e1
+    style CSV fill:#f0f0f0
+    style ORTOOLS fill:#f0f0f0
