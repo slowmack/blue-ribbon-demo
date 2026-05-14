@@ -41,19 +41,39 @@ html, body, #root {
   margin: 18px 0 8px;
 }
 
+.crews-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 18px 0 8px;
+}
+
+.crews-header h2 {
+  margin: 0;
+}
+
+.crews-link {
+  appearance: none;
+  background: none;
+  border: 0;
+  font-size: 11px;
+  color: #2563eb;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.crews-link:hover {
+  color: #1d4ed8;
+}
+
 .crew-card {
-  display: block;
-  width: 100%;
-  text-align: left;
+  position: relative;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  padding: 10px 12px;
   margin-bottom: 8px;
   background: #fafafa;
-  cursor: pointer;
   transition: background 0.15s, border-color 0.15s, opacity 0.15s;
-  font: inherit;
-  color: inherit;
 }
 
 .crew-card:hover {
@@ -61,26 +81,45 @@ html, body, #root {
   border-color: #cbd5e1;
 }
 
-.crew-card.disabled {
-  opacity: 0.55;
+.crew-card.hidden {
+  opacity: 0.5;
   background: #f8fafc;
 }
 
-.crew-card.disabled .crew-name {
-  text-decoration: line-through;
-  color: #6b7280;
+.crew-card-toggle {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 10px 12px;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
 }
 
 .crew-card .crew-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   margin-bottom: 4px;
 }
 
 .crew-card .crew-name {
   font-weight: 600;
   font-size: 14px;
+  flex: 1;
+}
+
+.crew-card .crew-eye {
+  font-size: 12px;
+  color: #6b7280;
+  width: 12px;
+  text-align: center;
+}
+
+.crew-card.hidden .crew-eye {
+  color: #9ca3af;
 }
 
 .crew-card .crew-swatch {
@@ -108,17 +147,36 @@ html, body, #root {
   white-space: nowrap;
 }
 
-.crew-card .crew-off-label {
-  margin-top: 6px;
-  font-size: 11px;
-  font-style: italic;
-  color: #6b7280;
-}
-
 .crew-card .crew-notes {
   margin-top: 4px;
   color: #6b7280;
   font-size: 11px;
+}
+
+.crew-only {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  appearance: none;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 10px;
+  color: #475569;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.crew-card:hover .crew-only {
+  opacity: 1;
+}
+
+.crew-only:hover {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
 }
 
 .map-wrap {

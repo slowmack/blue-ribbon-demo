@@ -7,11 +7,12 @@
 
 ## 2026-05-14
 
-- [x] Per-crew enable/disable toggle — clickable crew cards in the sidebar
-- [x] Disabled crews excluded from route building; remaining crews absorb their workload (stats, schedule, map all refresh)
-- [x] Playback auto-resets when crew enablement changes (avoids stale truck positions)
-- [x] Last enabled crew can't be disabled (would leave no one to do the work)
-- [x] Disabled crew visual: outlined swatch, struck-through name, faded card, "Off — work redistributed" label
+- [x] First pass: per-crew enable/disable that redistributed workload across remaining crews. User clarified: just want a map-visibility filter, not a re-optimization.
+- [x] Reverted: routes always built from all 10 crews. New `visibleCrewIds` state filters routes/dots/trucks at the render layer only.
+- [x] Stats panel stays fleet-wide regardless of visibility — headline number doesn't shift when isolating crews.
+- [x] Per-crew "Only" button (visible on hover) — one-click isolate.
+- [x] "Show all" link in the Crews header when at least one crew is hidden.
+- [x] Visual states: hidden crew card faded, swatch becomes outline-only, eye-dot indicator (● visible / ○ hidden) next to crew name.
 
 ## Deferred
 

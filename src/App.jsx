@@ -13,33 +13,27 @@ export default function App() {
   const customers = useMemo(() => generateCustomers(300, 1337), []);
   const crews = useMemo(() => generateCrews(), []);
 
-  const [enabledCrewIds, setEnabledCrewIds] = useState(
-    () => new Set(crews.map((c) => c.id))
-  );
-  const enabledCrews = useMemo(
-    () => crews.filter((c) => enabledCrewIds.has(c.id)),
-    [crews, enabledCrewIds]
-  );
-
+  // Routes always built from the full crew roster — toggling crews only
+  // affects what's drawn on the map.
   const randomRoutes = useMemo(
-    () => buildRandomRoutes(customers, enabledCrews, 42),
-    [customers, enabledCrews]
+    () => buildRandomRoutes(customers, crews, 42),
+    [customers, crews]
   );
   const optimizedRoutes = useMemo(
-    () => buildOptimizedRoutes(customers, enabledCrews),
-    [customers, enabledCrews]
+    () => buildOptimizedRoutes(customers, crews),
+    [customers, crews]
   );
 
   const randomStats = useMemo(() => fleetStats(randomRoutes), [randomRoutes]);
   const optimizedStats = useMemo(() => fleetStats(optimizedRoutes), [optimizedRoutes]);
 
   const randomWeek = useMemo(
-    () => buildWeekSchedule(randomRoutes, enabledCrews),
-    [randomRoutes, enabledCrews]
+    () => buildWeekSchedule(randomRoutes, crews),
+    [randomRoutes, crews]
   );
   const optimizedWeek = useMemo(
-    () => buildWeekSchedule(optimizedRoutes, enabledCrews),
-    [optimizedRoutes, enabledCrews]
+    () => buildWeekSchedule(optimizedRoutes, crews),
+    [optimizedRoutes, crews]
   );
 
   const [mode, setMode] = useState('setup');
@@ -47,12 +41,15 @@ export default function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [speed, setSpeed] = useState(1);
+  const [visibleCrewIds, setVisibleCrewIds] = useState(
+    () => new Set(crews.map((c) => c.id))
+  );
 
-  // Reset playback when day, mode, or crew enablement changes (route shapes shift).
+  // Reset playback when day or mode changes.
   useEffect(() => {
     setIsPlaying(false);
     setProgress(0);
-  }, [selectedDay, mode, enabledCrewIds]);
+  }, [selectedDay, mode]);
 
   // rAF animation loop.
   const rafRef = useRef();
@@ -85,7 +82,8 @@ export default function App() {
     mode === 'optimized' ? optimizedWeek :
     null;
 
-  const activeRoutes = useMemo(() => {
+  // Full set of routes for the current mode + day (before crew-visibility filter).
+  const allActiveRoutes = useMemo(() => {
     if (!weekSchedule) return null;
     if (selectedDay === null) {
       return mode === 'random' ? randomRoutes : optimizedRoutes;
@@ -93,12 +91,18 @@ export default function App() {
     return routesForDay(weekSchedule, selectedDay);
   }, [mode, selectedDay, weekSchedule, randomRoutes, optimizedRoutes]);
 
-  // Truck positions + visited stops, only meaningful when a day is selected.
+  // Filter to only visible crews — this is what the map renders.
+  const visibleRoutes = useMemo(() => {
+    if (!allActiveRoutes) return null;
+    return allActiveRoutes.filter((r) => visibleCrewIds.has(r.crewId));
+  }, [allActiveRoutes, visibleCrewIds]);
+
+  // Truck positions + visited stops for visible crews only.
   const playback = useMemo(() => {
-    if (!activeRoutes || selectedDay === null) return null;
+    if (!visibleRoutes || selectedDay === null) return null;
     const trucks = [];
     const visitedIds = new Set();
-    for (const r of activeRoutes) {
+    for (const r of visibleRoutes) {
       const pos = positionAlongRoute(r.stops, progress);
       if (!pos) continue;
       trucks.push({ crewId: r.crewId, color: r.color, lat: pos.lat, lng: pos.lng });
@@ -107,9 +111,10 @@ export default function App() {
       }
     }
     return { trucks, visitedIds };
-  }, [activeRoutes, selectedDay, progress]);
+  }, [visibleRoutes, selectedDay, progress]);
 
-  // Stats panel: weekly totals when no day selected, daily totals when one is.
+  // Stats panel stays fleet-wide so the before/after headline doesn't shift
+  // when the user is just isolating a crew on the map.
   const randomDayStats = useMemo(
     () => (selectedDay !== null ? dayFleetStats(randomWeek, selectedDay) : null),
     [randomWeek, selectedDay]
@@ -121,29 +126,38 @@ export default function App() {
 
   const periodLabel = selectedDay === null ? 'weekly' : DAY_LABELS[selectedDay];
 
-  function toggleCrew(crewId) {
-    setEnabledCrewIds((prev) => {
+  // Per-crew route lookup used by the sidebar (uses full route set — sidebar
+  // card stats stay accurate even when the crew is hidden).
+  const crewRouteLookup = allActiveRoutes;
+
+  function toggleCrewVisibility(crewId) {
+    setVisibleCrewIds((prev) => {
       const next = new Set(prev);
-      if (next.has(crewId)) {
-        // Don't allow disabling the last crew — there'd be no one to route the work.
-        if (next.size <= 1) return prev;
-        next.delete(crewId);
-      } else {
-        next.add(crewId);
-      }
+      if (next.has(crewId)) next.delete(crewId);
+      else next.add(crewId);
       return next;
     });
+  }
+
+  function showAllCrews() {
+    setVisibleCrewIds(new Set(crews.map((c) => c.id)));
+  }
+
+  function showOnlyCrew(crewId) {
+    setVisibleCrewIds(new Set([crewId]));
   }
 
   return (
     <div className="app">
       <CrewSidebar
         crews={crews}
-        enabledCrewIds={enabledCrewIds}
-        onToggleCrew={toggleCrew}
+        visibleCrewIds={visibleCrewIds}
+        onToggleCrew={toggleCrewVisibility}
+        onShowAll={showAllCrews}
+        onShowOnly={showOnlyCrew}
         mode={mode}
         onModeChange={setMode}
-        routes={activeRoutes}
+        routes={crewRouteLookup}
         weekSchedule={weekSchedule}
         selectedDay={selectedDay}
         onSelectDay={setSelectedDay}
@@ -165,7 +179,7 @@ export default function App() {
       />
       <MapView
         customers={customers}
-        routes={activeRoutes}
+        routes={visibleRoutes}
         trucks={playback?.trucks ?? null}
         visitedIds={playback?.visitedIds ?? null}
       />

@@ -20,6 +20,12 @@ export default function MapView({ customers, routes, trucks, visitedIds }) {
   const showingRoutes = Boolean(routes);
   const showingTrucks = Boolean(trucks && trucks.length > 0);
 
+  // In routed modes (random/optimized), only render customers that belong to
+  // a visible crew. In setup mode, render all 300.
+  const visibleCustomers = showingRoutes
+    ? customers.filter((c) => customerColors.has(c.id))
+    : customers;
+
   return (
     <div className="map-wrap">
       <MapContainer
@@ -46,7 +52,7 @@ export default function MapView({ customers, routes, trucks, visitedIds }) {
             />
           ))}
 
-        {customers.map((c) => {
+        {visibleCustomers.map((c) => {
           const color = customerColors?.get(c.id) ?? c.zoneColor;
           const isVisited = visitedIds?.has(c.id);
           return (

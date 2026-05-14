@@ -28,8 +28,8 @@ Goal: a polished, interactive demo Sean shows to the Blue Ribbon owner to earn b
 - **Day 3:** PlaybackControls — play/pause/reset, 0.5×/1×/2×/4× speeds, 30-sec base wall-clock duration
 - **Day 3:** Animated truck markers (white-outlined crew-colored circles) interpolated along each day's route via requestAnimationFrame
 - **Day 3:** Visited stops fade as the truck passes them
-- **Day 3+:** Per-crew enable/disable — click any crew card to toggle. Disabled crews are removed from route building so their workload is redistributed across the remaining crews live (stats + map + schedule all refresh). Last enabled crew is protected from being disabled.
-- Headline numbers from current synthetic data: **3,429 → 459 mi/wk (87% reduction)**, hours 323 → 221 (31% reduction). Disabling Juliet: 459 → 397 mi. Single crew (Alpha) absorbs all 300 customers: 351 mi.
+- **Day 3+:** Per-crew **visibility toggle** — click any crew card to hide/show its dots, route line, and truck on the map. Routes themselves are always computed against all 10 crews; the toggle is a pure display filter. Hover any crew card to reveal an "Only" button that isolates that crew. "Show all" link in the Crews header brings everyone back.
+- Headline numbers from current synthetic data: **3,429 → 459 mi/wk (87% reduction)**, hours 323 → 221 (31% reduction). Stats panel always reflects the fleet — toggling visibility doesn't shift the headline.
 
 ## Next Actions
 
@@ -48,7 +48,7 @@ Goal: a polished, interactive demo Sean shows to the Blue Ribbon owner to earn b
 - 2026-05-13: Day 1 — project scaffold, Vite+React init, synthetic data, map shell with customer dots and crew sidebar
 - 2026-05-13: Day 2 — routing engine (random + balanced k-means/nearest-neighbor), mode toggle, stats panel, route polylines on map
 - 2026-05-13: Day 3 — weekly schedule split (per-crew sub-clustering), DayPicker, animated playback, truck markers, visited-stop fade
-- 2026-05-14: Per-crew enable/disable toggle — clickable crew cards trigger live re-optimization across remaining crews
+- 2026-05-14: Per-crew enable/disable (later corrected) — first pass redistributed workload across remaining crews; reverted to a pure map-visibility toggle per user feedback. Routes stay computed against all 10 crews; toggle just hides dots/route/truck on the map. Added "Only" button per crew and "Show all" link.
 
 ## Key Files
 

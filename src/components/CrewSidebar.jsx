@@ -9,8 +9,10 @@ function formatMiles(n) {
 
 export default function CrewSidebar({
   crews,
-  enabledCrewIds,
+  visibleCrewIds,
   onToggleCrew,
+  onShowAll,
+  onShowOnly,
   mode,
   onModeChange,
   routes,
@@ -34,9 +36,8 @@ export default function CrewSidebar({
 
   const dayPickerVisible = mode !== 'setup';
   const playbackVisible = mode !== 'setup' && selectedDay !== null;
-  const enabledCount = enabledCrewIds.size;
-  const isOnlyEnabled = (crewId) =>
-    enabledCount === 1 && enabledCrewIds.has(crewId);
+  const visibleCount = visibleCrewIds.size;
+  const allVisible = visibleCount === crews.length;
 
   return (
     <aside className="sidebar">
@@ -69,50 +70,72 @@ export default function CrewSidebar({
         />
       )}
 
-      <h2>
-        Crews ({enabledCount}/{crews.length})
-      </h2>
+      <div className="crews-header">
+        <h2>
+          Crews ({visibleCount}/{crews.length} shown)
+        </h2>
+        {!allVisible && (
+          <button
+            type="button"
+            className="crews-link"
+            onClick={onShowAll}
+            title="Show every crew on the map"
+          >
+            Show all
+          </button>
+        )}
+      </div>
+
       {crews.map((crew) => {
-        const enabled = enabledCrewIds.has(crew.id);
-        const cantDisable = isOnlyEnabled(crew.id);
+        const visible = visibleCrewIds.has(crew.id);
         const route = routeByCrew.get(crew.id);
         return (
-          <button
+          <div
             key={crew.id}
-            type="button"
-            className={`crew-card ${enabled ? '' : 'disabled'}`}
-            onClick={() => onToggleCrew(crew.id)}
-            aria-pressed={enabled}
-            title={
-              cantDisable
-                ? 'At least one crew must remain enabled'
-                : enabled ? 'Click to take this crew off the schedule' : 'Click to add this crew back to the schedule'
-            }
+            className={`crew-card ${visible ? '' : 'hidden'}`}
           >
-            <div className="crew-header">
-              <span className="crew-name">{crew.name}</span>
-              <span
-                className={`crew-swatch ${enabled ? '' : 'off'}`}
-                style={enabled ? { background: crew.color } : { borderColor: crew.color }}
-              />
-            </div>
-            <div className="crew-meta">
-              <span>{crew.size} crew</span>
-              <span>{crew.speed.toFixed(2)}× speed</span>
-              <span>{crew.capacity}/day</span>
-            </div>
-            {enabled && route && (
-              <div className="crew-meta" style={{ marginTop: 6 }}>
-                <span><strong>{route.stops.length}</strong> stops</span>
-                <span><strong>{formatMiles(route.miles)}</strong></span>
-                <span><strong>{route.hours.toFixed(1)}h</strong></span>
+            <button
+              type="button"
+              className="crew-card-toggle"
+              onClick={() => onToggleCrew(crew.id)}
+              aria-pressed={visible}
+              title={visible ? 'Hide this crew on the map' : 'Show this crew on the map'}
+            >
+              <div className="crew-header">
+                <span className="crew-name">{crew.name}</span>
+                <span className="crew-eye" aria-hidden="true">
+                  {visible ? '●' : '○'}
+                </span>
+                <span
+                  className={`crew-swatch ${visible ? '' : 'off'}`}
+                  style={visible ? { background: crew.color } : { borderColor: crew.color }}
+                />
               </div>
+              <div className="crew-meta">
+                <span>{crew.size} crew</span>
+                <span>{crew.speed.toFixed(2)}× speed</span>
+                <span>{crew.capacity}/day</span>
+              </div>
+              {route && (
+                <div className="crew-meta" style={{ marginTop: 6 }}>
+                  <span><strong>{route.stops.length}</strong> stops</span>
+                  <span><strong>{formatMiles(route.miles)}</strong></span>
+                  <span><strong>{route.hours.toFixed(1)}h</strong></span>
+                </div>
+              )}
+              <div className="crew-notes">{crew.notes}</div>
+            </button>
+            {mode !== 'setup' && (
+              <button
+                type="button"
+                className="crew-only"
+                onClick={() => onShowOnly(crew.id)}
+                title={`Show only ${crew.name} on the map`}
+              >
+                Only
+              </button>
             )}
-            {!enabled && (
-              <div className="crew-meta crew-off-label">Off — work redistributed</div>
-            )}
-            <div className="crew-notes">{crew.notes}</div>
-          </button>
+          </div>
         );
       })}
     </aside>
