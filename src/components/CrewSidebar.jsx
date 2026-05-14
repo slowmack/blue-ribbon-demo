@@ -1,5 +1,7 @@
 import ModeToggle from './ModeToggle.jsx';
 import StatsPanel from './StatsPanel.jsx';
+import DayPicker from './DayPicker.jsx';
+import PlaybackControls from './PlaybackControls.jsx';
 
 function formatMiles(n) {
   return `${Math.round(n)} mi`;
@@ -10,13 +12,26 @@ export default function CrewSidebar({
   mode,
   onModeChange,
   routes,
+  weekSchedule,
+  selectedDay,
+  onSelectDay,
+  isPlaying,
+  progress,
+  speed,
+  onPlayPause,
+  onReset,
+  onSpeedChange,
   randomStats,
   optimizedStats,
+  periodLabel,
 }) {
   const routeByCrew = new Map();
   if (routes) {
     for (const r of routes) routeByCrew.set(r.crewId, r);
   }
+
+  const dayPickerVisible = mode !== 'setup';
+  const playbackVisible = mode !== 'setup' && selectedDay !== null;
 
   return (
     <aside className="sidebar">
@@ -30,6 +45,22 @@ export default function CrewSidebar({
           mode={mode}
           randomStats={randomStats}
           optimizedStats={optimizedStats}
+          periodLabel={periodLabel}
+        />
+      )}
+
+      {dayPickerVisible && (
+        <DayPicker selectedDay={selectedDay} onChange={onSelectDay} />
+      )}
+
+      {playbackVisible && (
+        <PlaybackControls
+          isPlaying={isPlaying}
+          progress={progress}
+          speed={speed}
+          onPlayPause={onPlayPause}
+          onReset={onReset}
+          onSpeedChange={onSpeedChange}
         />
       )}
 

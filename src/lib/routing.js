@@ -43,7 +43,7 @@ function shuffle(arr, rand) {
   return out;
 }
 
-function centroid(points) {
+export function centroid(points) {
   if (points.length === 0) return { lat: 36.25, lng: -94.18 };
   let lat = 0, lng = 0;
   for (const p of points) { lat += p.lat; lng += p.lng; }
@@ -90,7 +90,7 @@ export function buildRandomRoutes(customers, crews, seed = 42) {
 
 // ---- Optimized: geographic clustering + nearest-neighbor --------------------
 
-function assignBalanced(customers, centers, shares) {
+export function assignBalanced(customers, centers, shares) {
   // Capacity-proportional, geographic assignment. Customers are processed in
   // order of how "close" their nearest center is — dense-area customers grab
   // their preferred cluster first; remote customers settle for whatever has
@@ -121,7 +121,7 @@ function assignBalanced(customers, centers, shares) {
   return buckets;
 }
 
-function nearestNeighborOrder(stops, start) {
+export function nearestNeighborOrder(stops, start) {
   if (stops.length === 0) return [];
   const remaining = stops.slice();
   const ordered = [];

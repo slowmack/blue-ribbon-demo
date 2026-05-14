@@ -1,32 +1,105 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import MapView from './components/MapView.jsx';
 import CrewSidebar from './components/CrewSidebar.jsx';
 import { generateCustomers } from './data/customers.js';
 import { generateCrews } from './data/crews.js';
 import { buildRandomRoutes, buildOptimizedRoutes, fleetStats } from './lib/routing.js';
+import { buildWeekSchedule, routesForDay, dayFleetStats, DAY_LABELS } from './lib/schedule.js';
+import { positionAlongRoute } from './lib/animation.js';
+
+const ANIM_DURATION_MS = 30000;
 
 export default function App() {
   const customers = useMemo(() => generateCustomers(300, 1337), []);
   const crews = useMemo(() => generateCrews(), []);
 
-  const randomRoutes = useMemo(
-    () => buildRandomRoutes(customers, crews, 42),
-    [customers, crews]
-  );
-  const optimizedRoutes = useMemo(
-    () => buildOptimizedRoutes(customers, crews),
-    [customers, crews]
-  );
+  const randomRoutes = useMemo(() => buildRandomRoutes(customers, crews, 42), [customers, crews]);
+  const optimizedRoutes = useMemo(() => buildOptimizedRoutes(customers, crews), [customers, crews]);
 
   const randomStats = useMemo(() => fleetStats(randomRoutes), [randomRoutes]);
   const optimizedStats = useMemo(() => fleetStats(optimizedRoutes), [optimizedRoutes]);
 
-  const [mode, setMode] = useState('setup');
+  const randomWeek = useMemo(() => buildWeekSchedule(randomRoutes, crews), [randomRoutes, crews]);
+  const optimizedWeek = useMemo(() => buildWeekSchedule(optimizedRoutes, crews), [optimizedRoutes, crews]);
 
-  const activeRoutes =
-    mode === 'random' ? randomRoutes :
-    mode === 'optimized' ? optimizedRoutes :
+  const [mode, setMode] = useState('setup');
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [speed, setSpeed] = useState(1);
+
+  // Reset playback when day or mode changes.
+  useEffect(() => {
+    setIsPlaying(false);
+    setProgress(0);
+  }, [selectedDay, mode]);
+
+  // rAF animation loop.
+  const rafRef = useRef();
+  const lastTimeRef = useRef();
+  useEffect(() => {
+    if (!isPlaying) {
+      lastTimeRef.current = undefined;
+      return;
+    }
+    function tick(now) {
+      if (lastTimeRef.current === undefined) lastTimeRef.current = now;
+      const dt = now - lastTimeRef.current;
+      lastTimeRef.current = now;
+      setProgress((p) => {
+        const next = p + (dt / ANIM_DURATION_MS) * speed;
+        if (next >= 1) {
+          setIsPlaying(false);
+          return 1;
+        }
+        return next;
+      });
+      rafRef.current = requestAnimationFrame(tick);
+    }
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [isPlaying, speed]);
+
+  const weekSchedule =
+    mode === 'random' ? randomWeek :
+    mode === 'optimized' ? optimizedWeek :
     null;
+
+  const activeRoutes = useMemo(() => {
+    if (!weekSchedule) return null;
+    if (selectedDay === null) {
+      return mode === 'random' ? randomRoutes : optimizedRoutes;
+    }
+    return routesForDay(weekSchedule, selectedDay);
+  }, [mode, selectedDay, weekSchedule, randomRoutes, optimizedRoutes]);
+
+  // Truck positions + visited stops, only meaningful when a day is selected.
+  const playback = useMemo(() => {
+    if (!activeRoutes || selectedDay === null) return null;
+    const trucks = [];
+    const visitedIds = new Set();
+    for (const r of activeRoutes) {
+      const pos = positionAlongRoute(r.stops, progress);
+      if (!pos) continue;
+      trucks.push({ crewId: r.crewId, color: r.color, lat: pos.lat, lng: pos.lng });
+      for (let i = 0; i < pos.visitedCount; i++) {
+        visitedIds.add(r.stops[i].id);
+      }
+    }
+    return { trucks, visitedIds };
+  }, [activeRoutes, selectedDay, progress]);
+
+  // Stats panel: weekly totals when no day selected, daily totals when one is.
+  const randomDayStats = useMemo(
+    () => (selectedDay !== null ? dayFleetStats(randomWeek, selectedDay) : null),
+    [randomWeek, selectedDay]
+  );
+  const optimizedDayStats = useMemo(
+    () => (selectedDay !== null ? dayFleetStats(optimizedWeek, selectedDay) : null),
+    [optimizedWeek, selectedDay]
+  );
+
+  const periodLabel = selectedDay === null ? 'weekly' : DAY_LABELS[selectedDay];
 
   return (
     <div className="app">
@@ -35,10 +108,31 @@ export default function App() {
         mode={mode}
         onModeChange={setMode}
         routes={activeRoutes}
-        randomStats={randomStats}
-        optimizedStats={optimizedStats}
+        weekSchedule={weekSchedule}
+        selectedDay={selectedDay}
+        onSelectDay={setSelectedDay}
+        isPlaying={isPlaying}
+        progress={progress}
+        speed={speed}
+        onPlayPause={() => {
+          if (progress >= 1) setProgress(0);
+          setIsPlaying((p) => !p);
+        }}
+        onReset={() => {
+          setIsPlaying(false);
+          setProgress(0);
+        }}
+        onSpeedChange={setSpeed}
+        randomStats={selectedDay !== null ? randomDayStats : randomStats}
+        optimizedStats={selectedDay !== null ? optimizedDayStats : optimizedStats}
+        periodLabel={periodLabel}
       />
-      <MapView customers={customers} routes={activeRoutes} />
+      <MapView
+        customers={customers}
+        routes={activeRoutes}
+        trucks={playback?.trucks ?? null}
+        visitedIds={playback?.visitedIds ?? null}
+      />
     </div>
   );
 }

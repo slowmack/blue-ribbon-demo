@@ -11,7 +11,7 @@ function deltaPct(before, after) {
   return ((before - after) / before) * 100;
 }
 
-export default function StatsPanel({ randomStats, optimizedStats, mode }) {
+export default function StatsPanel({ randomStats, optimizedStats, mode, periodLabel = 'weekly' }) {
   const showingOptimized = mode === 'optimized';
   const active = showingOptimized ? optimizedStats : randomStats;
   const milesDelta = deltaPct(randomStats.totalMiles, optimizedStats.totalMiles);
@@ -24,7 +24,7 @@ export default function StatsPanel({ randomStats, optimizedStats, mode }) {
           {formatMiles(active.totalMiles)}
         </div>
         <div className="stats-headline-label">
-          {showingOptimized ? 'Optimized weekly miles' : 'Unoptimized weekly miles'}
+          {showingOptimized ? 'Optimized' : 'Unoptimized'} · {periodLabel} miles
         </div>
         <div className={`stats-delta ${milesDelta > 0 ? 'good' : 'bad'}`}>
           {milesDelta > 0 ? '↓' : '↑'} {Math.abs(milesDelta).toFixed(0)}% vs {showingOptimized ? 'unoptimized' : 'optimized'}

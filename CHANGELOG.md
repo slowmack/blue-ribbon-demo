@@ -1,13 +1,27 @@
 ## In Progress
 
-- [ ] Day 3: weekly schedule view (M–F per crew, respecting daily capacity)
-- [ ] Day 3: animated route playback with play/pause/speed
-- [ ] Day 3: clickable crew/day drilldown
-- [ ] Optional: rained-out Tuesday scenario
+- [ ] Owner-walkthrough rehearsal in browser
+- [ ] Optional: rained-out Tuesday scenario (reshuffle week + update stats)
+- [ ] Optional polish: heading-aware truck icon, scrubbable progress bar
+- [ ] Decision before live demo: keep OSM tiles or swap to Google Maps / Mapbox
 
 ## Deferred
 
 - [ ] Create GitHub repo `slowmack/blue-ribbon-demo` and push — Sean will set this up once Phase 0 nears the final demo
+- [ ] Deploy to Vercel for a shareable URL to share with the Blue Ribbon owner
+
+## 2026-05-13 (Day 3)
+
+- [x] Built `src/lib/schedule.js` — weekly→daily splitter using per-crew balanced k-means sub-clustering with farthest-first seeding + Lloyd iterations
+- [x] Built `src/lib/animation.js` — positionAlongRoute interpolates truck lat/lng along a list of stops by progress 0..1 and reports visitedCount
+- [x] Exported `nearestNeighborOrder`, `centroid`, `assignBalanced` from routing.js so schedule.js can reuse them
+- [x] Built `DayPicker.jsx` — Week + Mon–Fri tabs
+- [x] Built `PlaybackControls.jsx` — play/pause/reset + 0.5×/1×/2×/4× speeds + progress bar
+- [x] App.jsx: selectedDay + isPlaying + progress + speed state; requestAnimationFrame loop with auto-pause at progress=1
+- [x] MapView: renders day's polylines, animated truck markers (white-outline crew-color circles), fades visited stops
+- [x] StatsPanel: switches to per-day stats when a day is selected, preserves before/after delta
+- [x] Fixed initial spike: first attempt slicing the weekly NN path into 5 chunks made Fri 197 mi because outliers cluster at the end of NN traversals. Replaced with per-crew sub-clustering; Fri dropped to 69 mi
+- [x] Validated: weekly headline unchanged (3,429 → 459 mi, 87%). Daily fleet totals: Mon 63 / Tue 138 / Wed 76 / Thu 79 / Fri 69 (optimized) vs Mon 171 / Tue 285 / Wed 177 / Thu 200 / Fri 153 (random) — 2–3× per-day reduction
 
 ## 2026-05-13 (Day 2)
 

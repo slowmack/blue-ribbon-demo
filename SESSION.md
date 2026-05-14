@@ -23,15 +23,20 @@ Goal: a polished, interactive demo Sean shows to the Blue Ribbon owner to earn b
 - **Day 2:** Routing engine — random partition for unoptimized, capacity-proportional balanced k-means + nearest-neighbor for optimized
 - **Day 2:** StatsPanel showing total miles, hours, avg route, longest route, with % delta
 - **Day 2:** Map renders crew-colored route polylines + dots when in routed mode
+- **Day 3:** Week schedule split — each crew's stops sub-clustered into 5 balanced k-means clusters (one per weekday), then NN-ordered locally
+- **Day 3:** DayPicker (Week + M/T/W/Th/F) — selecting a day filters the map to that day's routes and switches StatsPanel to per-day numbers
+- **Day 3:** PlaybackControls — play/pause/reset, 0.5×/1×/2×/4× speeds, 30-sec base wall-clock duration
+- **Day 3:** Animated truck markers (white-outlined crew-colored circles) interpolated along each day's route via requestAnimationFrame
+- **Day 3:** Visited stops fade as the truck passes them
 - Headline numbers from current synthetic data: **3,429 → 459 mi/wk (87% reduction)**, hours 323 → 221 (31% reduction)
 
 ## Next Actions
 
-- Day 3: weekly schedule view — break each crew's weekly route into M–F daily segments respecting daily capacity
-- Day 3: animated route playback with play/pause/speed control for a selected day
-- Day 3: clickable crew/day to drill into a single day's route
-- Optional half day: rained-out Tuesday weather scenario (reshuffle the week)
-- Deferred until Phase 0 nears final: create `slowmack/blue-ribbon-demo` on GitHub and push
+- Owner-walkthrough rehearsal: open the demo, click through Setup → Unoptimized → Optimized → Week → Day → Play. Time how the story lands.
+- Optional half day: rained-out Tuesday weather scenario (reshuffle the week and update stats)
+- Optional polish: animate the truck with a heading-aware icon instead of a plain circle; scrubbable progress bar
+- Maps key decision before live demo: stay on OSM tiles or swap to Google Maps / Mapbox for polish
+- Deferred until Phase 0 nears final: create `slowmack/blue-ribbon-demo` on GitHub and push, plus deploy to Vercel for a shareable URL
 
 ## Known Bugs
 
@@ -41,6 +46,7 @@ Goal: a polished, interactive demo Sean shows to the Blue Ribbon owner to earn b
 
 - 2026-05-13: Day 1 — project scaffold, Vite+React init, synthetic data, map shell with customer dots and crew sidebar
 - 2026-05-13: Day 2 — routing engine (random + balanced k-means/nearest-neighbor), mode toggle, stats panel, route polylines on map
+- 2026-05-13: Day 3 — weekly schedule split (per-crew sub-clustering), DayPicker, animated playback, truck markers, visited-stop fade
 
 ## Key Files
 
@@ -49,9 +55,13 @@ Goal: a polished, interactive demo Sean shows to the Blue Ribbon owner to earn b
 - `src/data/customers.js` — synthetic customer generator (300 records across 8 NWA cities)
 - `src/data/crews.js` — 10-crew roster with size, speed, capacity
 - `src/lib/distance.js` — haversine + route-miles helpers
-- `src/lib/routing.js` — random + optimized route builders, fleetStats
-- `src/App.jsx` — main layout + state wiring
-- `src/components/MapView.jsx` — Leaflet map, customer dots, route polylines
-- `src/components/CrewSidebar.jsx` — mode toggle + stats + crew list
+- `src/lib/routing.js` — random + optimized route builders, fleetStats, exported nearestNeighborOrder/centroid/assignBalanced for reuse
+- `src/lib/schedule.js` — weekly→daily split via per-crew sub-clustering, dayFleetStats, DAY_LABELS
+- `src/lib/animation.js` — positionAlongRoute interpolation
+- `src/App.jsx` — main layout + state wiring + rAF animation loop
+- `src/components/MapView.jsx` — Leaflet map, customer dots, route polylines, truck markers, visited-stop fade
+- `src/components/CrewSidebar.jsx` — mode toggle + stats + day picker + playback controls + crew list
 - `src/components/ModeToggle.jsx` — Setup / Unoptimized / Optimized toggle
-- `src/components/StatsPanel.jsx` — fleet stats with before/after delta
+- `src/components/StatsPanel.jsx` — fleet stats with before/after delta + period label
+- `src/components/DayPicker.jsx` — Week / Mon / Tue / Wed / Thu / Fri buttons
+- `src/components/PlaybackControls.jsx` — play/pause, reset, speed selector, progress bar
