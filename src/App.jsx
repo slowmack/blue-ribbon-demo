@@ -13,14 +13,34 @@ export default function App() {
   const customers = useMemo(() => generateCustomers(300, 1337), []);
   const crews = useMemo(() => generateCrews(), []);
 
-  const randomRoutes = useMemo(() => buildRandomRoutes(customers, crews, 42), [customers, crews]);
-  const optimizedRoutes = useMemo(() => buildOptimizedRoutes(customers, crews), [customers, crews]);
+  const [enabledCrewIds, setEnabledCrewIds] = useState(
+    () => new Set(crews.map((c) => c.id))
+  );
+  const enabledCrews = useMemo(
+    () => crews.filter((c) => enabledCrewIds.has(c.id)),
+    [crews, enabledCrewIds]
+  );
+
+  const randomRoutes = useMemo(
+    () => buildRandomRoutes(customers, enabledCrews, 42),
+    [customers, enabledCrews]
+  );
+  const optimizedRoutes = useMemo(
+    () => buildOptimizedRoutes(customers, enabledCrews),
+    [customers, enabledCrews]
+  );
 
   const randomStats = useMemo(() => fleetStats(randomRoutes), [randomRoutes]);
   const optimizedStats = useMemo(() => fleetStats(optimizedRoutes), [optimizedRoutes]);
 
-  const randomWeek = useMemo(() => buildWeekSchedule(randomRoutes, crews), [randomRoutes, crews]);
-  const optimizedWeek = useMemo(() => buildWeekSchedule(optimizedRoutes, crews), [optimizedRoutes, crews]);
+  const randomWeek = useMemo(
+    () => buildWeekSchedule(randomRoutes, enabledCrews),
+    [randomRoutes, enabledCrews]
+  );
+  const optimizedWeek = useMemo(
+    () => buildWeekSchedule(optimizedRoutes, enabledCrews),
+    [optimizedRoutes, enabledCrews]
+  );
 
   const [mode, setMode] = useState('setup');
   const [selectedDay, setSelectedDay] = useState(null);
@@ -28,11 +48,11 @@ export default function App() {
   const [progress, setProgress] = useState(0);
   const [speed, setSpeed] = useState(1);
 
-  // Reset playback when day or mode changes.
+  // Reset playback when day, mode, or crew enablement changes (route shapes shift).
   useEffect(() => {
     setIsPlaying(false);
     setProgress(0);
-  }, [selectedDay, mode]);
+  }, [selectedDay, mode, enabledCrewIds]);
 
   // rAF animation loop.
   const rafRef = useRef();
@@ -101,10 +121,26 @@ export default function App() {
 
   const periodLabel = selectedDay === null ? 'weekly' : DAY_LABELS[selectedDay];
 
+  function toggleCrew(crewId) {
+    setEnabledCrewIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(crewId)) {
+        // Don't allow disabling the last crew — there'd be no one to route the work.
+        if (next.size <= 1) return prev;
+        next.delete(crewId);
+      } else {
+        next.add(crewId);
+      }
+      return next;
+    });
+  }
+
   return (
     <div className="app">
       <CrewSidebar
         crews={crews}
+        enabledCrewIds={enabledCrewIds}
+        onToggleCrew={toggleCrew}
         mode={mode}
         onModeChange={setMode}
         routes={activeRoutes}

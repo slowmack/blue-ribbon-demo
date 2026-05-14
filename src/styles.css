@@ -42,11 +42,33 @@ html, body, #root {
 }
 
 .crew-card {
+  display: block;
+  width: 100%;
+  text-align: left;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 10px 12px;
   margin-bottom: 8px;
   background: #fafafa;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+  font: inherit;
+  color: inherit;
+}
+
+.crew-card:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.crew-card.disabled {
+  opacity: 0.55;
+  background: #f8fafc;
+}
+
+.crew-card.disabled .crew-name {
+  text-decoration: line-through;
+  color: #6b7280;
 }
 
 .crew-card .crew-header {
@@ -65,6 +87,13 @@ html, body, #root {
   width: 14px;
   height: 14px;
   border-radius: 3px;
+  border: 1px solid transparent;
+}
+
+.crew-card .crew-swatch.off {
+  background: transparent !important;
+  border-width: 2px;
+  border-style: solid;
 }
 
 .crew-card .crew-meta {
@@ -77,6 +106,19 @@ html, body, #root {
 
 .crew-card .crew-meta span {
   white-space: nowrap;
+}
+
+.crew-card .crew-off-label {
+  margin-top: 6px;
+  font-size: 11px;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.crew-card .crew-notes {
+  margin-top: 4px;
+  color: #6b7280;
+  font-size: 11px;
 }
 
 .map-wrap {

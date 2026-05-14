@@ -9,6 +9,8 @@ function formatMiles(n) {
 
 export default function CrewSidebar({
   crews,
+  enabledCrewIds,
+  onToggleCrew,
   mode,
   onModeChange,
   routes,
@@ -32,6 +34,9 @@ export default function CrewSidebar({
 
   const dayPickerVisible = mode !== 'setup';
   const playbackVisible = mode !== 'setup' && selectedDay !== null;
+  const enabledCount = enabledCrewIds.size;
+  const isOnlyEnabled = (crewId) =>
+    enabledCount === 1 && enabledCrewIds.has(crewId);
 
   return (
     <aside className="sidebar">
@@ -64,31 +69,50 @@ export default function CrewSidebar({
         />
       )}
 
-      <h2>Crews ({crews.length})</h2>
+      <h2>
+        Crews ({enabledCount}/{crews.length})
+      </h2>
       {crews.map((crew) => {
+        const enabled = enabledCrewIds.has(crew.id);
+        const cantDisable = isOnlyEnabled(crew.id);
         const route = routeByCrew.get(crew.id);
         return (
-          <div key={crew.id} className="crew-card">
+          <button
+            key={crew.id}
+            type="button"
+            className={`crew-card ${enabled ? '' : 'disabled'}`}
+            onClick={() => onToggleCrew(crew.id)}
+            aria-pressed={enabled}
+            title={
+              cantDisable
+                ? 'At least one crew must remain enabled'
+                : enabled ? 'Click to take this crew off the schedule' : 'Click to add this crew back to the schedule'
+            }
+          >
             <div className="crew-header">
               <span className="crew-name">{crew.name}</span>
-              <span className="crew-swatch" style={{ background: crew.color }} />
+              <span
+                className={`crew-swatch ${enabled ? '' : 'off'}`}
+                style={enabled ? { background: crew.color } : { borderColor: crew.color }}
+              />
             </div>
             <div className="crew-meta">
               <span>{crew.size} crew</span>
               <span>{crew.speed.toFixed(2)}× speed</span>
               <span>{crew.capacity}/day</span>
             </div>
-            {route && (
+            {enabled && route && (
               <div className="crew-meta" style={{ marginTop: 6 }}>
                 <span><strong>{route.stops.length}</strong> stops</span>
                 <span><strong>{formatMiles(route.miles)}</strong></span>
                 <span><strong>{route.hours.toFixed(1)}h</strong></span>
               </div>
             )}
-            <div className="crew-meta" style={{ marginTop: 4, color: '#6b7280', fontSize: 11 }}>
-              {crew.notes}
-            </div>
-          </div>
+            {!enabled && (
+              <div className="crew-meta crew-off-label">Off — work redistributed</div>
+            )}
+            <div className="crew-notes">{crew.notes}</div>
+          </button>
         );
       })}
     </aside>

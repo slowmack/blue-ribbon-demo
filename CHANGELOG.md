@@ -5,6 +5,14 @@
 - [ ] Optional polish: heading-aware truck icon, scrubbable progress bar
 - [ ] Decision before live demo: keep OSM tiles or swap to Google Maps / Mapbox
 
+## 2026-05-14
+
+- [x] Per-crew enable/disable toggle — clickable crew cards in the sidebar
+- [x] Disabled crews excluded from route building; remaining crews absorb their workload (stats, schedule, map all refresh)
+- [x] Playback auto-resets when crew enablement changes (avoids stale truck positions)
+- [x] Last enabled crew can't be disabled (would leave no one to do the work)
+- [x] Disabled crew visual: outlined swatch, struck-through name, faded card, "Off — work redistributed" label
+
 ## Deferred
 
 - [ ] Create GitHub repo `slowmack/blue-ribbon-demo` and push — Sean will set this up once Phase 0 nears the final demo
