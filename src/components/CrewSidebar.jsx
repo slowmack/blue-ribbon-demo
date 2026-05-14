@@ -122,16 +122,14 @@ export default function CrewSidebar({
               )}
               <div className="crew-notes">{crew.notes}</div>
             </button>
-            {mode !== 'setup' && (
-              <button
-                type="button"
-                className="crew-only"
-                onClick={() => onShowOnly(crew.id)}
-                title={`Show only ${crew.name} on the map`}
-              >
-                Only
-              </button>
-            )}
+            <button
+              type="button"
+              className="crew-only"
+              onClick={() => onShowOnly(crew.id)}
+              title={`Show only ${crew.name} on the map`}
+            >
+              Only
+            </button>
           </div>
         );
       })}
